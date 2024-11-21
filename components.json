@@ -15,7 +15,11 @@
     "utils": "@/lib/utils",
     "ui": "@/components/ui",
     "lib": "@/lib",
-    "hooks": "@/hooks"
+    "hooks": "@/hooks",
+    "data-access": "@/data-access",
+    "db": "@/db",
+    "actions": "@/actions",
+    "use-case": "@/use-cases"
   },
   "iconLibrary": "lucide"
 }
