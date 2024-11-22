@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { createUserUseCase } from "@/use-cases/user"
+import { createUserAction } from "./actions"
 
 // Define the form schema with Zod
 const formSchema = z.object({
@@ -28,7 +28,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>
 
 
-export function TattooRequestForm() {
+export function CreateUserForm() {
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -40,7 +40,7 @@ export function TattooRequestForm() {
 
   async function onSubmit(values: FormValues) {
     try {
-      await createUserUseCase(values.email, values.name)
+      await createUserAction(values.email, values.name)
       form.reset()
     } catch (error) {
       console.error(error)  

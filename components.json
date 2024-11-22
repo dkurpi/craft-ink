@@ -19,7 +19,8 @@
     "data-access": "@/data-access",
     "db": "@/db",
     "actions": "@/actions",
-    "use-case": "@/use-cases"
+    "use-case": "@/use-cases",
+    "public": "@/public"
   },
   "iconLibrary": "lucide"
 }
