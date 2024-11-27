@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model TattooGeneration {
+  id                String   @id @default(cuid())
+  prompt            String
+  tattooType        String   // 'minimal' | 'traditional' | 'geometric'
+  style             String   // 'black-and-grey' | 'colorful' | 'watercolor'
+  images            String[] // Array of image URLs
+  status            String   // 'pending' | 'generating' | 'completed' | 'failed'
+  predictionId      String?  // Add this field
+  createdAt         DateTime @default(now())
+
+  @@index([createdAt])
+} 

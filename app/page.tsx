@@ -1,16 +1,11 @@
-import { CreateUserForm } from "./create-user-form";
-import { Card, CardContent } from "@/components/ui/card";
-import { UserTable } from "./user-table";
+import { TattooGenerator } from "./tattoo-generator";
+import { TattooHistory } from "./tattoo-history";
 
-export default function Home() {
+export default function TattooGeneratorPage() {
   return (
-    <div className="flex items-start justify-center gap-8 min-h-screen p-8 pb-20 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <Card className="w-full max-w-md bg-zinc-900">
-        <CardContent className="p-6">
-          <CreateUserForm />
-        </CardContent>
-      </Card>
-      <UserTable />
+    <div className="container mx-auto py-8 max-w-4xl px-4 flex flex-col gap-12">
+      <TattooGenerator />
+      <TattooHistory />
     </div>
   );
 }
