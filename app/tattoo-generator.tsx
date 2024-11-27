@@ -14,6 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 interface TattooGeneratorFormProps {
   onSubmit: (data: TattooFormData) => Promise<void>;
@@ -119,7 +120,7 @@ function TattooGeneratorForm({ onSubmit, isLoading }: TattooGeneratorFormProps) 
         <h2 className="text-2xl font-bold tracking-tight">Generate Your Tattoo</h2>
         <p className="text-muted-foreground">Fill in the details below to create your custom tattoo design.</p>
       </div>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="prompt"
@@ -127,7 +128,11 @@ function TattooGeneratorForm({ onSubmit, isLoading }: TattooGeneratorFormProps) 
             <FormItem>
               <FormLabel>Describe your tattoo</FormLabel>
               <FormControl>
-                <Input placeholder="A small dog with geometric patterns..." {...field} />
+                <Input 
+                  placeholder="A small dog with geometric patterns..." 
+                  {...field} 
+                  disabled={isLoading}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -140,7 +145,11 @@ function TattooGeneratorForm({ onSubmit, isLoading }: TattooGeneratorFormProps) 
           render={({ field }) => (
             <FormItem>
               <FormLabel>Tattoo Type</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select 
+                onValueChange={field.onChange} 
+                defaultValue={field.value}
+                disabled={isLoading}
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a type" />
@@ -163,7 +172,11 @@ function TattooGeneratorForm({ onSubmit, isLoading }: TattooGeneratorFormProps) 
           render={({ field }) => (
             <FormItem>
               <FormLabel>Style</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select 
+                onValueChange={field.onChange} 
+                defaultValue={field.value}
+                disabled={isLoading}
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a style" />
@@ -197,12 +210,21 @@ interface TattooGridProps {
 }
 
 function TattooGrid({ images, selectedIndex, onSelectImage, isLoading }: TattooGridProps) {
+  const placeholderImages = [
+    '/images/placeholder-1.png',
+    '/images/placeholder-2.png',
+    '/images/placeholder-3.png',
+    '/images/placeholder-4.png',
+  ];
+  
   return (
     <div className="space-y-4">
       {/* Main selected image */}
       <div className="relative aspect-square w-full rounded-lg overflow-hidden border">
         {isLoading ? (
-          <div className="absolute inset-0 bg-muted animate-pulse" />
+          <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
+            <LoadingSpinner message="Creating your unique tattoo design..." color="#9CA3AF"/>
+          </div>
         ) : images[selectedIndex] ? (
           <Image
             src={images[selectedIndex]}
@@ -212,36 +234,59 @@ function TattooGrid({ images, selectedIndex, onSelectImage, isLoading }: TattooG
           />
         ) : (
           <div className="absolute inset-0 bg-muted flex items-center justify-center">
-            <p className="text-muted-foreground">No image generated</p>
+            <Image
+              src={placeholderImages[0]}
+              alt="Placeholder tattoo"
+              fill
+              className="object-cover blur-[3px] opacity-30"
+            />
           </div>
         )}
       </div>
 
       {/* Thumbnail grid */}
       <div className="grid grid-cols-4 gap-2">
-        {Array.from({ length: 4 }).map((_, index) => (
-          <button
-            key={index}
-            onClick={() => onSelectImage(index)}
-            className={cn(
-              "relative aspect-square rounded-md overflow-hidden border",
-              selectedIndex === index && "ring-2 ring-primary"
-            )}
-          >
-            {isLoading ? (
-              <div className="absolute inset-0 bg-muted animate-pulse" />
-            ) : images[index] ? (
+        {images.length > 0 ? (
+          // Show actual images if available
+          images.map((image, index) => (
+            <button
+              key={index}
+              onClick={() => onSelectImage(index)}
+              className={cn(
+                "relative aspect-square rounded-md overflow-hidden border",
+                selectedIndex === index && "ring-2 ring-primary"
+              )}
+            >
               <Image
-                src={images[index]}
+                src={image}
                 alt={`Generated tattoo ${index + 1}`}
                 fill
                 className="object-cover"
               />
-            ) : (
-              <div className="absolute inset-0 bg-muted" />
-            )}
-          </button>
-        ))}
+            </button>
+          ))
+        ) : (
+          // Show 4 placeholder images with loading spinners when no images are available
+          placeholderImages.map((placeholderImage, index) => (
+            <div
+              key={index}
+              className="relative aspect-square rounded-md overflow-hidden border bg-muted"
+            >
+              {isLoading ? (
+                <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
+                  <LoadingSpinner color="#9CA3AF" size={18} message="" />
+                </div>
+              ) : (
+                <Image
+                  src={placeholderImage}
+                  alt="Placeholder tattoo"
+                  fill
+                  className="object-cover blur-[3px] opacity-30"
+                />
+              )}
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

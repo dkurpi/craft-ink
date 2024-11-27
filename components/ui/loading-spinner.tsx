@@ -1,33 +1,18 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { useState, useEffect } from "react"
 
 interface LoadingSpinnerProps {
   size?: number
   color?: string
+  message?: string
 }
 
 export function LoadingSpinner({ 
   size = 48, 
-  color = "currentColor" 
+  color = "currentColor",
+  message = "Generating your tattoo..."
 }: LoadingSpinnerProps) {
-  const [elapsedTime, setElapsedTime] = useState(0)
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setElapsedTime((prevTime) => prevTime + 1)
-    }, 1000)
-
-    return () => clearInterval(timer)
-  }, [])
-
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60)
-    const remainingSeconds = seconds % 60
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
-  }
-
   return (
     <div className="flex items-center justify-center w-full min-h-[400px] bg-muted/10 rounded-lg">
       <motion.div
@@ -36,14 +21,13 @@ export function LoadingSpinner({
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="flex flex-col items-center">
-          <p className="text-sm text-muted-foreground animate-pulse">
-            Generating your tattoo...
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            {formatTime(elapsedTime)}
-          </p>
-        </div>
+        {message && (
+          <div className="flex flex-col items-center">
+            <p className="text-sm text-muted-foreground animate-pulse">
+              {message}
+            </p>
+          </div>
+        )}
         <svg
           className="animate-spin"
           width={size}
@@ -66,9 +50,7 @@ export function LoadingSpinner({
             }}
           />
         </svg>
-
       </motion.div>
     </div>
   )
 }
-

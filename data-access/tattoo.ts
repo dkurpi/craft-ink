@@ -1,30 +1,38 @@
 import db from "@/lib/db";
 import { TattooFormData, TattooGeneration, TattooStatus } from "@/types/tattoo";
+import { Prisma } from "@prisma/client";
 
 export async function createTattooGeneration(
-  data: TattooFormData,
-  predictionId: string
-) {
-  console.log('data', data, predictionId);
+  data: TattooFormData
+): Promise<Prisma.TattooGenerationCreateInput> {
   return await db.tattooGeneration.create({
     data: {
       prompt: data.prompt,
       tattooType: data.tattooType,
       style: data.style,
       images: [],
-      status: 'pending',
-      predictionId
+      status: 'generating',
     }
-  }) as TattooGeneration;
+  })
 }
 
+export async function setTattooGenerationPrediction(
+  id: string,
+  predictionId: string
+): Promise<Prisma.TattooGenerationUpdateInput> {
+  return await db.tattooGeneration.update({
+    where: { id },
+    data: {
+      predictionId
+    }
+  });
+}
 
 export async function updateTattooGenerationImages(
   id: string,
   images: string[],
   status: TattooStatus
-) {
-  console.log('data', id, images, status);
+): Promise<Prisma.TattooGenerationUpdateInput> {
   return await db.tattooGeneration.update({
     where: { id },
     data: {

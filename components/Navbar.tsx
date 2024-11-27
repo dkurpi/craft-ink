@@ -11,8 +11,8 @@ export default function Navbar() {
             href="/" 
             className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
           >
-            <div className="font-bold text-xl bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-              CraftInk
+            <div className="text-xl">
+              <span className="font-normal">Craft</span><span className="font-bold">Ink</span>
             </div>
           </Link>
 
@@ -30,16 +30,7 @@ export default function Navbar() {
             >
               Create
             </Link>
-            <Link 
-              href="/generator" 
-              className="transition-colors hover:text-foreground/80 text-foreground/60"
-            >
-              Community
-            </Link>
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm">
-                Sign In
-              </Button>
               <Button size="sm">
                 Get Started
               </Button>

@@ -1,6 +1,6 @@
 "use server";
 
-import { createTattooGeneration, updateTattooGenerationImages } from "@/data-access/tattoo";
+import { createTattooGeneration, setTattooGenerationPrediction, updateTattooGenerationImages } from "@/data-access/tattoo";
 import { generateTattooPrompt } from "@/lib/prompts";
 import { createServerAction } from "zsa";
 import { z } from "zod";
@@ -20,6 +20,13 @@ export const generateTattooAction = createServerAction()
   .handler(async ({ input }) => {
     const finalPrompt = generateTattooPrompt(input);
 
+    const generation = await createTattooGeneration(input);
+    revalidatePath('/');
+
+    if (!generation.id) {
+      throw new Error('Failed to create tattoo generation');
+    }
+
     const prediction = await replicate.predictions.create({
       version: "ac732df83cea7fff18b8472768c88ad041fa750ff7682a21affe81863cbe77e4",
       input: {
@@ -33,7 +40,9 @@ export const generateTattooAction = createServerAction()
       },
     });
 
-    const generation = await createTattooGeneration(input, prediction.id);
+
+    await setTattooGenerationPrediction(generation.id, prediction.id);
+    revalidatePath('/');
 
     return { predictionId: prediction.id, generationId: generation.id };
   });
