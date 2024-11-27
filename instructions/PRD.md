@@ -289,6 +289,45 @@ export const createGroupAction = authenticatedAction
 
 ## Project Structure
 
+├── README.md
+├── app
+│   ├── actions.tsx
+│   ├── components
+│   ├── create-user-form.tsx
+│   ├── generator
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── user-table.tsx
+├── components
+│   └── ui
+├── components.json
+├── data-access
+│   └── user.ts
+├── db
+│   ├── index.ts
+│   ├── migrations
+│   └── schema.prisma
+├── hooks
+│   └── use-toast.ts
+├── instructions
+│   └── PRD.md
+├── lib
+│   └── utils.ts
+├── next-env.d.ts
+├── next.config.mjs
+├── package-lock.json
+├── package.json
+├── postcss.config.mjs
+├── public
+│   ├── favicon.ico
+│   ├── fonts
+│   └── globals.css
+├── tailwind.config.ts
+├── tsconfig.json
+└── use-cases
+    ├── errors.ts
+    └── user.ts
+
 Project will be structured with layered architecture. There will be data access objects, use cases, and actions:
 - **Data Access:**
   - These will be responsible for interacting with the database.  
