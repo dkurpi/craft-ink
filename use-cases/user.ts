@@ -1,25 +1,19 @@
 "use server";
 
-import { createUser, getUserByEmail } from "@/data-access/user";
+import { createUser, getUserByEmail, getAllUsers } from "@/data-access/user";
+import { User } from "@prisma/client";
+import { EmailInUseError } from "./errors";
+export async function getUsersUseCase(): Promise<User[]> {
+  return await getAllUsers();
+}
 
 export async function createUserUseCase(email: string, name: string) {
-  try {
-    // Check if email already exists
-    const existingUser = await getUserByEmail(email);
-    
-    if (existingUser) {
-      throw new Error("Email already registered");
-    }
-
-    return await createUser(email, name);
-  } catch (error: unknown) {
-    if (error instanceof Error && error.message === "Email already registered") {
-      throw error;
-    }
-    // Handle other errors
-    if (error instanceof Error) {
-      throw new Error(`Failed to create user: ${error.message}`);
-    }
-    throw new Error("Failed to create user");
+  // Check if email already exists
+  const existingUser = await getUserByEmail(email);
+  
+  if (existingUser) {
+    throw new EmailInUseError();
   }
+
+  await createUser(email, name);
 }

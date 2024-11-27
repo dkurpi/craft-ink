@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { createUserAction } from "./actions"
+import { useServerAction } from "zsa-react";
+import { useToast } from "@/hooks/use-toast"
 
 // Define the form schema with Zod
 const formSchema = z.object({
@@ -27,29 +29,36 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>
 
-
 export function CreateUserForm() {
+  const { toast } = useToast(); 
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       email: "",
-    },
+    }
   })
 
-  async function onSubmit(values: FormValues) {
-    try {
-      await createUserAction(values.email, values.name)
-      form.reset()
-    } catch (error) {
-      console.error(error)  
+  const { isPending, execute } = useServerAction(createUserAction, {
+    onSuccess: () => {
+      toast({
+        title: "User created",
+        description: "User has been created successfully",
+      })
+    },
+    onError: (error) => {
+      console.error(error);
+      toast({
+        title: "Error",
+        description: error.err.message
+      })
     }
-  }
+  }); 
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit((values) => execute({ email: values.email, name: values.name }))} className="space-y-8">
         <FormField
           control={form.control}
           name="name"
@@ -57,7 +66,11 @@ export function CreateUserForm() {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="Your name" {...field} />
+                <Input 
+                  placeholder="Your name" 
+                  {...field} 
+                  disabled={isPending} 
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -70,13 +83,20 @@ export function CreateUserForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="your.email@example.com" type="email" {...field} />
+                <Input 
+                  placeholder="your.email@example.com" 
+                  type="string" 
+                  {...field} 
+                  disabled={isPending} 
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit Request</Button>
+        <Button type="submit" disabled={isPending}>
+          {isPending ? "Submitting..." : "Submit Request"}
+        </Button>
       </form>
     </Form>
   )
