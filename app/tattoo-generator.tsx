@@ -125,11 +125,34 @@ function TattooGeneratorForm({ onSubmit, isLoading }: TattooGeneratorFormProps) 
             <FormItem>
               <FormLabel>Describe your tattoo</FormLabel>
               <FormControl>
-                <Input 
-                  placeholder="A small dog with geometric patterns..." 
-                  {...field} 
-                  disabled={isLoading}
-                />
+                <div className="flex gap-2">
+                  <Input 
+                    placeholder="A small dog with geometric patterns..." 
+                    {...field} 
+                    disabled={isLoading}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    disabled={isLoading}
+                    onClick={() => {
+                      const ideas = [
+                        "A minimalist mountain range with a crescent moon",
+                        "A delicate butterfly made of geometric shapes",
+                        "An abstract wave pattern with dotwork shading",
+                        "A small compass with floral elements",
+                        "An origami crane in flight",
+                        "A constellation of stars forming a wolf",
+                        "A simple tree of life design",
+                        "An infinity symbol with cherry blossoms"
+                      ];
+                      field.onChange(ideas[Math.floor(Math.random() * ideas.length)]);
+                    }}
+                  >
+                    🎲
+                  </Button>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
