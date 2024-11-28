@@ -16,7 +16,6 @@ export async function createTattooGeneration(
   })
 }
 
-
 export async function updateTattooGenerationImagesAndStatus(
   generationId: string,
   images: string[],
@@ -36,7 +35,7 @@ export async function getAllTattooGenerations() {
     orderBy: {
       createdAt: 'desc'
     },
-    take: 5
+    take: 10
   });
 }
 

@@ -51,6 +51,23 @@ export async function getAllTattooGenerationsUseCase() {
     return await getAllTattooGenerations();
 }
 
+export async function refreshTattoosUseCase() {
+    const tattoos = await getAllTattooGenerations();
+    
+    // Update status for any generating tattoos
+    const updatedTattoos = await Promise.all(
+        tattoos.map(async (tattoo) => {
+            if (tattoo.status !== 'completed') {
+                const updatedStatus = await updateTattooGenerationStatusUseCase(tattoo.id);
+                return { ...tattoo, ...updatedStatus };
+            }
+            return tattoo;
+        })
+    );
+    
+    return updatedTattoos;
+}
+
 
 
 

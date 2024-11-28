@@ -271,7 +271,7 @@ function TattooGrid({ images, selectedIndex, onSelectImage, isLoading }: TattooG
             >
               {isLoading ? (
                 <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
-                  <LoadingSpinner color="#9CA3AF" size={18} message="" />
+                  <LoadingSpinner color="#9CA3AF" size={18} />
                 </div>
               ) : (
                 <Image

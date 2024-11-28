@@ -3,7 +3,7 @@
 import { createServerAction } from "zsa";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { createTattooGenerationUseCase, updateTattooGenerationStatusUseCase } from "@/use-cases/tattoo-generation";
+import { createTattooGenerationUseCase, refreshTattoosUseCase, updateTattooGenerationStatusUseCase } from "@/use-cases/tattoo-generation";
 
 export const generateTattooAction = createServerAction()
   .input(z.object({
@@ -33,3 +33,10 @@ export const updateTattooGenerationStatus = createServerAction()
 
     return status;
   }); 
+
+
+export const refreshTattoos = createServerAction()
+  .handler(async () => {
+    await refreshTattoosUseCase();
+    revalidatePath('/');
+  });

@@ -11,7 +11,7 @@ interface LoadingSpinnerProps {
 export function LoadingSpinner({ 
   size = 48, 
   color = "currentColor",
-  message = "Generating your tattoo..."
+  message = ""
 }: LoadingSpinnerProps) {
   return (
     <div className="flex items-center justify-center w-full min-h-[400px] bg-muted/10 rounded-lg">
