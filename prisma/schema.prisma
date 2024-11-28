@@ -8,15 +8,26 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model User {
+  id                String             @id @default(cuid())
+  email             String             @unique
+  name              String?
+  createdAt         DateTime           @default(now())
+  tattooGenerations TattooGeneration[]
+}
+
 model TattooGeneration {
-  id                String   @id @default(cuid())
-  prompt            String
-  tattooType        String   // 'minimal' | 'traditional' | 'geometric'
-  style             String   // 'black-and-grey' | 'colorful' | 'watercolor'
-  images            String[] // Array of image URLs
-  status            String   // 'pending' | 'generating' | 'completed' | 'failed'
-  predictionId      String?  // Add this field
-  createdAt         DateTime @default(now())
+  id           String   @id @default(cuid())
+  prompt       String
+  tattooType   String
+  style        String
+  images       String[]
+  status       String
+  predictionId String?
+  createdAt    DateTime @default(now())
+  userId       String?
+  user         User?    @relation(fields: [userId], references: [id])
 
   @@index([createdAt])
-} 
+  @@index([userId])
+}

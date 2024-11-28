@@ -2,6 +2,15 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+```
+Clerk webhook:
+ngrok http --url=upright-buffalo-optionally.ngrok-free.app 3000
+```
+
+```
+upright-buffalo-optionally.ngrok-free.app
+```
+
 First, run the development server:
 
 ```bash

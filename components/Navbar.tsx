@@ -1,7 +1,11 @@
+"use client";
+
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 
 export default function Navbar() {
+  const { isSignedIn } = useUser();
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center max-w-4xl mx-auto px-4">
@@ -46,12 +50,19 @@ export default function Navbar() {
 
           {/* Auth Buttons */}
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" className="hidden md:inline-flex">
-              Log in
-            </Button>
-            <Button size="sm">
-              Sign Up
-            </Button>
+            {!isSignedIn && (
+              <>
+                <SignInButton>
+                  Log in
+                </SignInButton>
+                <SignUpButton>
+                  Sign Up
+                </SignUpButton> 
+              </>
+            )}
+            {isSignedIn && (
+              <UserButton />
+            )}
           </div>
         </div>
       </div>
