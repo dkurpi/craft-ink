@@ -1,16 +1,16 @@
-import { getAllTattooGenerations } from "@/data-access/tattoo";
 import { TattooGeneration } from "@/types/tattoo";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { getAllTattooGenerationsUseCase } from "@/use-cases/tattoo-generation";
 
 
 export async function TattooHistory() {
-  const tattoos = await getAllTattooGenerations();
+  const tattoos = await getAllTattooGenerationsUseCase();
 
   return (
     <div >
       <h2 className="text-2xl font-bold mb-4">Previously Generated Tattoos</h2>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {tattoos.map((tattoo) => (<TattooHistoryItem tattoo={tattoo} />))}
+        {tattoos.map((tattoo) => (<TattooHistoryItem key={tattoo.id} tattoo={tattoo as TattooGeneration} />))}
       </div>
     </div>
   );

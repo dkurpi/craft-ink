@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { TattooFormData } from "@/types/tattoo";
 import { useToast } from "@/components/ui/use-toast";
 import { useServerAction } from "zsa-react";
-import { generateTattooAction, getPredictionStatus } from "@/app/actions";
+import { generateTattooAction, updateTattooGenerationStatus } from "@/app/actions";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
@@ -22,18 +22,16 @@ interface TattooGeneratorFormProps {
 }
 
 export function TattooGenerator() {
+  const [generationId, setGenerationId] = useState<string | null>(null);
   const [images, setImages] = useState<string[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [predictionId, setPredictionId] = useState<string | null>(null);
-  const [generationId, setGenerationId] = useState<string | null>(null);
   const { toast } = useToast();
 
   const { execute: generateTattoo, isPending: isGenerating } = useServerAction(
     generateTattooAction,
     {
-      onSuccess: (response) => {
-        setPredictionId(response.data.predictionId);
-        setGenerationId(response.data.generationId);
+      onSuccess: ({ data: { generationId } }) => {
+        setGenerationId(generationId);
       },
       onError: (error) => {
         console.error('error', error.err.message);
@@ -46,35 +44,34 @@ export function TattooGenerator() {
     }
   );
 
-  const { execute: checkStatus } = useServerAction(getPredictionStatus, {
+  const { execute: checkStatus } = useServerAction(updateTattooGenerationStatus, {
     onSuccess: ({data}) => {
-      if (data.status === "succeeded" && data.images) {
+      if (data.status === "completed") {
         setImages(data.images);
         setSelectedIndex(0);
-        setPredictionId(null);
         setGenerationId(null);
       }
     },
     onError: (error) => {
+      setGenerationId(null);
+      console.error('error', error.err.message);
       toast({
         title: "Error",
         description: error.err.message || "Failed to check generation status",
         variant: "destructive",
       });
-      setPredictionId(null);
-      setGenerationId(null);
     },
   });
 
   useEffect(() => {
-    if (predictionId && generationId) {
+    if (generationId) {
       const interval = setInterval(() => {
-        checkStatus({ predictionId, generationId });
+        checkStatus(generationId);
       }, 1000);
 
       return () => clearInterval(interval);
     }
-  }, [predictionId, generationId]);
+  }, [generationId]);
 
   const handleSubmit = async (data: TattooFormData) => {
     setImages([]);
@@ -87,7 +84,7 @@ export function TattooGenerator() {
       <div>
         <TattooGeneratorForm 
           onSubmit={handleSubmit} 
-          isLoading={isGenerating || !!predictionId} 
+          isLoading={isGenerating || !!generationId}
         />
       </div>
       
@@ -96,7 +93,7 @@ export function TattooGenerator() {
           images={images}
           selectedIndex={selectedIndex}
           onSelectImage={setSelectedIndex}
-          isLoading={isGenerating || !!predictionId}
+          isLoading={isGenerating || !!generationId}
         />
       </div>
     </div>
@@ -222,7 +219,7 @@ function TattooGrid({ images, selectedIndex, onSelectImage, isLoading }: TattooG
       {/* Main selected image */}
       <div className="relative aspect-square w-full rounded-lg overflow-hidden border">
         {isLoading ? (
-          <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
+          <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
             <LoadingSpinner message="Creating your unique tattoo design..." color="#9CA3AF"/>
           </div>
         ) : images[selectedIndex] ? (
