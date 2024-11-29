@@ -5,10 +5,16 @@ import { generateTattooPrompt } from "@/lib/prompts";
 import { TattooStatus } from "@/types/tattoo";
 
 
-export async function createTattooGenerationUseCase({prompt, tattooType, style}: TattooFormData) {
+export async function createTattooGenerationUseCase(userId: string, {prompt, tattooType, style}: TattooFormData) {
     const finalPrompt = generateTattooPrompt({prompt, tattooType, style});
     const predictionId = await startPrediction(finalPrompt);
-    const generation = await createTattooGeneration({prompt: finalPrompt, tattooType, style, predictionId});
+    const generation = await createTattooGeneration({
+        prompt: finalPrompt, 
+        tattooType, 
+        style, 
+        predictionId,
+        userId
+    });
     return generation;
 }   
 
@@ -47,8 +53,8 @@ export async function updateTattooGenerationStatusUseCase(
     return { status: 'generating', images: []};
 }
 
-export async function getAllTattooGenerationsUseCase() {
-    return await getAllTattooGenerations();
+export async function getAllTattooGenerationsUseCase(userId?: string) {
+   return await getAllTattooGenerations(userId);
 }
 
 export async function refreshTattoosUseCase() {

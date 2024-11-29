@@ -2,7 +2,7 @@ import db from "@/lib/db";
 import { TattooFormData, TattooStatus } from "@/types/tattoo";
 
 export async function createTattooGeneration(
-  data: TattooFormData & { predictionId: string }
+  data: TattooFormData & { predictionId: string; userId: string }
 ) {
   return await db.tattooGeneration.create({
     data: {
@@ -12,6 +12,7 @@ export async function createTattooGeneration(
       images: [],
       status: 'generating',
       predictionId: data.predictionId,
+      userId: data.userId,
     }
   })
 }
@@ -30,13 +31,32 @@ export async function updateTattooGenerationImagesAndStatus(
   });
 }
 
-export async function getAllTattooGenerations() {
-  return await db.tattooGeneration.findMany({
+export async function getAllTattooGenerations(userId?: string) {
+  const tattoos = await db.tattooGeneration.findMany({
+    where: userId ? { userId } : undefined,
     orderBy: {
       createdAt: 'desc'
     },
-    take: 10
+    take: 10,
+    select: {
+      id: true,
+      prompt: true,
+      images: true,
+      status: true,
+      user: {
+        select: {
+          email: true
+        }
+      }
+    }
   });
+  return tattoos.map((tattoo) => ({
+    id: tattoo.id,
+    prompt: tattoo.prompt,
+    images: tattoo.images,
+    status: tattoo.status,
+    userEmail: tattoo.user?.email || ''
+  }));  
 }
 
 export async function getTattooGenerationById(id: string) {

@@ -15,7 +15,7 @@ export async function TattooHistory() {
         <RefreshTattoosButton />
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {tattoos.map((tattoo) => (<TattooHistoryItem key={tattoo.id} tattoo={tattoo as TattooGeneration} />))}
+        {tattoos.map((tattoo) => (<TattooHistoryItem tattoo={tattoo} />))}
       </div>
     </div>
   );
@@ -36,6 +36,7 @@ function TattooHistoryItem({ tattoo }: { tattoo: TattooGeneration }) {
       )}
       <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2 text-sm rounded-b-lg">
         <p className="line-clamp-2">{tattoo.prompt}</p>
+        <p className="text-xs text-gray-300 mt-1">{tattoo.userEmail}</p>
       </div>
     </div>
   );

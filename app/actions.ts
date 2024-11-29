@@ -4,8 +4,10 @@ import { createServerAction } from "zsa";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { createTattooGenerationUseCase, refreshTattoosUseCase, updateTattooGenerationStatusUseCase } from "@/use-cases/tattoo-generation";
+import { authenticatedAction } from "@/lib/actions";
 
-export const generateTattooAction = createServerAction()
+export const generateTattooAction = authenticatedAction
+  .createServerAction()
   .input(z.object({
     prompt: z.string().min(3),
     tattooType: z.enum(['minimal', 'traditional', 'geometric']),
@@ -14,10 +16,9 @@ export const generateTattooAction = createServerAction()
   .output(z.object({
     generationId: z.string()
   })) 
-  .handler(async ({ input }) => {
-    const generation = await createTattooGenerationUseCase(input);
+  .handler(async ({ input, ctx: { user } }) => {
+    const generation = await createTattooGenerationUseCase(user.id, input);
     revalidatePath('/');
-
     return { generationId: generation.id };
   });
 
