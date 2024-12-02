@@ -43,3 +43,26 @@ export async function deleteUser(id: string) {
     }
   })
 }
+
+// credits
+
+export async function addCreditsToUser(id: string, amount: number) {
+  return await db.user.update({
+    where: { id },
+    data: { credits: { increment: amount } }
+  });
+}
+
+export async function removeCreditsFromUser(id: string, amount: number) {
+  return await db.user.update({
+    where: { id },
+    data: { credits: { decrement: amount } }
+  });
+}
+
+export async function getUserCredits(id: string) {
+  return await db.user.findUnique({ 
+    where: { id },
+    select: { credits: true }
+  });
+}

@@ -5,6 +5,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { createTattooGenerationUseCase, refreshTattoosUseCase, updateTattooGenerationStatusUseCase } from "@/use-cases/tattoo-generation";
 import { authenticatedAction } from "@/lib/actions";
+import { getUserCreditsUseCase } from "@/use-cases/credits";
 
 export const generateTattooAction = authenticatedAction
   .createServerAction()
@@ -40,4 +41,11 @@ export const refreshTattoos = createServerAction()
   .handler(async () => {
     await refreshTattoosUseCase();
     revalidatePath('/');
+  });
+
+export const getUserCreditsAction = authenticatedAction
+  .createServerAction()
+  .output(z.number())
+  .handler(async ({ ctx: { user } }) => {
+    return await getUserCreditsUseCase(user.id);
   });

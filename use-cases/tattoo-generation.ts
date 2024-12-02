@@ -3,9 +3,13 @@ import { getPredictionStatus, startPrediction } from "@/lib/replicate";
 import { TattooFormData } from "@/types/tattoo";
 import { generateTattooPrompt } from "@/lib/prompts";
 import { TattooStatus } from "@/types/tattoo";
+import { checkAndDeductCreditsUseCase } from "./credits";
 
 
 export async function createTattooGenerationUseCase(userId: string, {prompt, tattooType, style}: TattooFormData) {
+    // Check and deduct credits before generating
+    await checkAndDeductCreditsUseCase(userId);
+    
     const finalPrompt = generateTattooPrompt({prompt, tattooType, style});
     const predictionId = await startPrediction(finalPrompt);
     const generation = await createTattooGeneration({
