@@ -3,7 +3,7 @@
 import { createServerAction } from "zsa";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { createTattooGenerationUseCase, refreshTattoosUseCase, updateTattooGenerationStatusUseCase } from "@/use-cases/tattoo-generation";
+import { createTattooGenerationUseCase, getTattooGenerationStatusUseCase, refreshTattoosUseCase } from "@/use-cases/tattoo-generation";
 import { authenticatedAction } from "@/lib/actions";
 import { getUserCreditsUseCase } from "@/use-cases/credits";
 
@@ -23,14 +23,14 @@ export const generateTattooAction = authenticatedAction
     return { generationId: generation.id };
   });
 
-export const updateTattooGenerationStatus = createServerAction()
+export const getTattooGenerationStatus = createServerAction()
   .input(z.string())
   .output(z.object({
     status: z.enum(['generating', 'completed', 'failed']),
     images: z.array(z.string())
   }))
   .handler(async ({input}) => {
-    const status = await updateTattooGenerationStatusUseCase(input);
+    const status = await getTattooGenerationStatusUseCase(input);
     revalidatePath('/');
 
     return status;

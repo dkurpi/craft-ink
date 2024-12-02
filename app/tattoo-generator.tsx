@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { TattooFormData } from "@/types/tattoo";
 import { useToast } from "@/components/ui/use-toast";
 import { useServerAction } from "zsa-react";
-import { generateTattooAction, updateTattooGenerationStatus } from "@/app/actions";
+import { generateTattooAction, getTattooGenerationStatus } from "@/app/actions";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
@@ -44,7 +44,7 @@ export function TattooGenerator() {
     }
   );
 
-  const { execute: checkStatus } = useServerAction(updateTattooGenerationStatus, {
+  const { execute: checkStatus } = useServerAction(getTattooGenerationStatus, {
     onSuccess: ({data}) => {
       if (data.status === "completed") {
         setImages(data.images);

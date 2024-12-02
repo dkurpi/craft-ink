@@ -18,16 +18,21 @@ export async function createTattooGeneration(
 }
 
 export async function updateTattooGenerationImagesAndStatus(
-  generationId: string,
+  predictionId: string,
   images: string[],
   status: TattooStatus
-){
+) {
+  const tattoo = await db.tattooGeneration.findFirst({
+    where: { predictionId }
+  });
+
+  if (!tattoo) {
+    throw new Error('Tattoo generation not found');
+  }
+
   return await db.tattooGeneration.update({
-    where: { id: generationId },
-    data: {
-      images,
-      status,
-    },
+    where: { id: tattoo.id },
+    data: { images, status }
   });
 }
 

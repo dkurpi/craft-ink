@@ -22,7 +22,7 @@ export async function createTattooGenerationUseCase(userId: string, {prompt, tat
     return generation;
 }   
 
-export async function updateTattooGenerationStatusUseCase(
+export async function getTattooGenerationStatusUseCase(
     generationId: string,
 ): Promise<{ status: TattooStatus; images: string[] }> {
     const generation = await getTattooGenerationById(generationId);
@@ -30,31 +30,10 @@ export async function updateTattooGenerationStatusUseCase(
         throw new Error('Tattoo generation not found');
     }   
 
-    if (!generation.predictionId) {
-        throw new Error('Prediction ID not found');
-    }
-
-    const prediction = await getPredictionStatus(generation.predictionId);
-    if (prediction.status === "succeeded" && prediction.output) {
-        await updateTattooGenerationImagesAndStatus(
-            generationId,
-            prediction.output,
-            'completed'
-        );
-        return { status: 'completed', images: prediction.output };
-
-    }
-
-    if (prediction.status === "failed") {
-        await updateTattooGenerationImagesAndStatus(
-            generationId,
-            [],
-            'failed'
-        );
-        return { status: 'failed', images: []};
-    }
-
-    return { status: 'generating', images: []};
+    return {
+        status: generation.status as TattooStatus,
+        images: generation.images
+    };
 }
 
 export async function getAllTattooGenerationsUseCase(userId?: string) {
@@ -80,4 +59,37 @@ export async function refreshTattoosUseCase() {
 
 
 
+export async function updateTattooGenerationStatusUseCase(
+    generationId: string,
+): Promise<{ status: TattooStatus; images: string[] }> {
+    const generation = await getTattooGenerationById(generationId);
+    if (!generation) {
+        throw new Error('Tattoo generation not found');
+    }   
 
+    if (!generation.predictionId) {
+        throw new Error('Prediction ID not found');
+    }
+
+    const prediction = await getPredictionStatus(generation.predictionId);
+    if (prediction.status === "succeeded" && prediction.output) {
+        await updateTattooGenerationImagesAndStatus(
+            generation.predictionId,
+            prediction.output,
+            'completed'
+        );
+        return { status: 'completed', images: prediction.output };
+
+    }
+
+    if (prediction.status === "failed") {
+        await updateTattooGenerationImagesAndStatus(
+            generation.predictionId,
+            [],
+            'failed'
+        );
+        return { status: 'failed', images: []};
+    }
+
+    return { status: 'generating', images: []};
+}

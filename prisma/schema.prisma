@@ -24,7 +24,7 @@ model TattooGeneration {
   style        String
   images       String[]
   status       String
-  predictionId String?
+  predictionId String   @unique
   createdAt    DateTime @default(now())
   userId       String?
   user         User?    @relation(fields: [userId], references: [id])
